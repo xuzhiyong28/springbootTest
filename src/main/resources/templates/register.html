@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="此代码内容为超萌的猫头鹰登录界面" />
+    <title>超萌的猫头鹰登录界面</title>
+
+    <link rel="stylesheet" href="../static/css/jq22.css"  th:href="@{/css/jq22.css}"  />
+</head>
+<body>
+<!-- begin -->
+<div id="login">
+    <div class="wrapper">
+        <div class="login">
+            <form action="" method="post" class="container offset1 loginform">
+                <div id="owl-login">
+                    <div class="hand"></div>
+                    <div class="hand hand-r"></div>
+                    <div class="arms">
+                        <div class="arm"></div>
+                        <div class="arm arm-r"></div>
+                    </div>
+                </div>
+                <div class="pad">
+                    <div class="control-group">
+                        <div class="controls">
+                            <label for="name" class="control-label fa fa-envelope"></label>
+                            <input id="name" type="text" name="name" placeholder="名称" tabindex="1" autofocus="autofocus" class="form-control input-medium" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <label for="userName" class="control-label fa fa-envelope"></label>
+                            <input id="userName" type="text" name="email" placeholder="用户名" tabindex="1" autofocus="autofocus" class="form-control input-medium" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <label for="password" class="control-label fa fa-asterisk"></label>
+                            <input id="password" type="password" name="password" placeholder="密码" tabindex="2" class="form-control input-medium" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <select class="form-control" id="role">
+                                <option th:each="roleBean : ${roleArray}" th:value="${roleBean.id}" th:text="${roleBean.description}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions"><a href="#" tabindex="5" class="btn pull-left btn-link text-muted">Forgot password?</a><a href="#" tabindex="6" class="btn btn-link text-muted">Sign Up</a>
+                    <button type="button" id="doLogin" tabindex="4" class="btn btn-primary">注册</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="../static/js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+    <script>
+        $(function(){
+            $("#doLogin").on('click',function(){
+                var name = $("#name").val(),
+                    userName = $("#userName").val(),
+                    role = $("#role").find('option:selected').val(),
+                    password =  $("#password").val();
+                if(!name || !userName || !password || !role) return ;
+                $.ajax({
+                    type : "POST",
+                    url : "/learn/register/add",
+                    data : {
+                        "name" : name,
+                        "role" : role,
+                        "userName" : userName,
+                        "password" : password
+                    },
+                    dataType : "json",
+                    success : function(data) {
+                        if(data.code > 0)
+                            window.location.href = "/learn/login";
+                    }
+                });
+            });
+        });
+    </script>
+</div>
+<!-- end -->
+</body>
+</html>

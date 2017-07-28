@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>learn Resources</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <script src="../static/js/websocket/sockjs.min.js" th:src="@{/js/websocket/sockjs.min.js}"></script>
+    <script src="../static/js/websocket/stomp.js" th:src="@{/js/websocket/stomp.js}"></script>
+    <script src="../static/js/websocket/jquery-3.1.1.js" th:src="@{/js/websocket/jquery-3.1.1.js}"></script>
+</head>
+<body onload="disconnect()">
+<div>
+    <div>
+        <button id="connect" onclick="connect();">连接</button>
+        <button id="disconnect" disabled="disabled" onclick="disconnect();">断开连接</button>
+    </div>
+
+    <div id="conversationDiv">
+        <label>输入你的名字</label><input type="text" id="name"/>
+        <button id="sendName" onclick="sendName();">发送</button>
+        <p id="response"></p>
+    </div>
+</div>
+<script type="text/javascript">
+    var stompClient = null;
+    function setConnected(connected) {
+        document.getElementById("connect").disabled = connected;
+        document.getElementById("disconnect").disabled = !connected;
+        document.getElementById("conversationDiv").style.visibility = connected ? 'visible' : 'hidden';
+        $("#response").html();
+    }
+    function connect() {
+        var socket = new SockJS("/endpointSang");
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            setConnected(true);
+            stompClient.subscribe('/topic/getResponse', function (response) {
+                showResponse(JSON.parse(response.body).responseMessage);
+            })
+        });
+    }
+    function disconnect() {
+        if (stompClient != null) {
+            stompClient.disconnect();
+        }
+        setConnected(false);
+    }
+    function sendName() {
+        var name = $('#name').val();
+        stompClient.send("/webscoket/welcome2", {}, JSON.stringify({'name': name}));
+    }
+    function showResponse(message) {
+        $("#response").append("<p>" + message + "</p>");
+    }
+
+</script>
+</body>
+</html>
